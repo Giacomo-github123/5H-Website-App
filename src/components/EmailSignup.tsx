@@ -5,6 +5,7 @@ const EmailSignup: React.FC = () => {
     const [email, setEmail] = useState('');
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        console.log('Submitting email:', email);
         event.preventDefault();
         try {
             const response = await fetch(`http://localhost:5173/api/subscribe?email=${email}`, {
