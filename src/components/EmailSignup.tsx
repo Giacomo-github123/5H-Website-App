@@ -2,14 +2,19 @@ import React, { useState } from 'react';
 import { Button, Form, Container, Row, Col } from 'react-bootstrap';
 
 const EmailSignup: React.FC = () => {
-    const [email, setEmail] = useState('');
+    const [email, setEmail] = useState<string>('');
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
         console.log('Submitting email:', email);
         event.preventDefault();
+        
         try {
-            const response = await fetch(`http://localhost:5173/api/subscribe?email=${email}`, {
-                method: 'GET',
+            const response = await fetch('http://localhost:5144/api/subscribe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email }),
             });
             if (!response.ok) {
                 const errorText = await response.text();
@@ -17,11 +22,12 @@ const EmailSignup: React.FC = () => {
             }
             alert('Thank you for subscribing!');
             setEmail('');  // Clear the input after successful submission
-        } catch (error: unknown) {
+        } catch (error) {
             if (error instanceof Error) {
                 console.error('Subscription error:', error.message);
                 alert(error.message);
             } else {
+                // Handle cases where error may not be an instance of Error.
                 console.error('An unexpected error occurred:', error);
                 alert('An unexpected error occurred. Please try again later.');
             }

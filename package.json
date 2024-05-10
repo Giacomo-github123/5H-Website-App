@@ -6,18 +6,20 @@
 
   "version": "0.0.0",
 
-  "scripts": {
+  "proxy": "http://localhost:5144",
 
+  "scripts": {
     "dev:server": "ts-node src/server.ts",
     "dev:client": "vite",
-    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "dev": "concurrently --kill-others \"npm run dev:client\" \"npm run dev:server\"",
 
-    "build": "tsc && vite build",
+    "build:server": "tsc --project tsconfig.server.json",
+    "build:client": "vite build",
+    "build": "npm run build:server && npm run build:client",
 
     "preview": "vite preview",
 
-    "start": "node server.js"
-
+    "start": "node build/server.ts"
   },
 
   "dependencies": {

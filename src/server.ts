@@ -1,55 +1,52 @@
 import express, { Request, Response } from 'express';
-import cors from 'cors';
 import { google } from 'googleapis';
 
+import cors from 'cors';
 
 const app = express();
-console.log("Server is initializing...");
-app.use(cors());
-app.use(express.json()); // Since bodyParser.json() is now deprecated
 
-// Google Sheets API setup
-const KEYFILEPATH = '../fifth-humour-email-list.json'; // Ensure this path is correct
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
+app.use(cors({
+    origin: 'http://localhost:5173'
+  }));
+app.use(express.json());
+
+const PORT2 = process.env.PORT || 5144;
+
+// Configure CORS if needed, here's a basic setup for local development:
+
+
+// Set up Google Sheets API
 const auth = new google.auth.GoogleAuth({
-    keyFilename: KEYFILEPATH,
-    scopes: SCOPES
+  keyFile: '../fifth-humour-email-list.json', // Path to your JSON key file
+  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
+
 const sheets = google.sheets({ version: 'v4', auth });
 
-// Endpoint to receive email and append it to Google Sheets
-app.get('/api/subscribe', async (req: Request, res: Response) => {
-    console.log('Received request to subscribe email:', req.query.email)
-    const { email } = req.query as { email?: string };
-
-    if (!email) {
-        console.log('Email address is missing in the request.');
-        return res.status(400).send('Email is required');
-    }
+// Endpoint to receive POST requests to subscribe emails
+app.post('/api/subscribe', async (req: Request, res: Response) => {
+    const { email } = req.body;
+    const spreadsheetId = '1NQ03kACJXrgxqH0RBZXymW-FgPVeIavCP3HkSSXQoKY'; // Replace with your spreadsheet ID
+    const range = 'Sheet1!A:A'; // For example, appending to column A
 
     try {
-        const spreadsheetId = '1NQ03kACJXrgxqH0RBZXymW-FgPVeIavCP3HkSSXQoKY';
-        const range = 'Sheet1!A:A';
-
         const response = await sheets.spreadsheets.values.append({
-            spreadsheetId,
-            range,
+            spreadsheetId: spreadsheetId,
+            range: range,
             valueInputOption: 'USER_ENTERED',
+            insertDataOption: 'INSERT_ROWS',
             requestBody: {
-                values: [[email]]
+                values: [[email]],
             },
         });
-
-        console.log('Email added successfully:', response.data);
-        res.status(200).send('Subscription successful');
-    } catch (error: any) {
-        console.error('Error when appending data to Google Sheets:', error);
-        res.status(500).send(`Failed to add email: ${error.message}`);
+        res.status(200).send('Email added successfully');
+    } catch (error) {
+        console.error('Error updating spreadsheet:', error);
+        res.status(500).send('Failed to update spreadsheet');
     }
 });
 
-// Set the port to listen on
-const PORT = process.env.PORT || 5173;
+// Start server
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT2}`);
 });
