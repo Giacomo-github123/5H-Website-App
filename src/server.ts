@@ -10,14 +10,14 @@ app.use(cors({
   }));
 app.use(express.json());
 
-const PORT2 = process.env.PORT || 5144;
+const PORT2 = process.env.PORT2 || 5144;
 
 // Configure CORS if needed, here's a basic setup for local development:
 
 
 // Set up Google Sheets API
 const auth = new google.auth.GoogleAuth({
-  keyFile: '../fifth-humour-email-list.json', // Path to your JSON key file
+  keyFile: './fifth-humour-email-list.json', // Path to your JSON key file
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
@@ -47,6 +47,6 @@ app.post('/api/subscribe', async (req: Request, res: Response) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT2, () => {
   console.log(`Server running on port ${PORT2}`);
 });
