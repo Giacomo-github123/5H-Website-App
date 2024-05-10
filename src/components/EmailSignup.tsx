@@ -36,12 +36,11 @@ const EmailSignup: React.FC = () => {
 
     return (
         <Container className="my-5">
-            <Row className="justify-content-md-center">
+            <Row className="justify-content-md-left">
                 <Col md={6}>
-                    <h2>Stay Updated!</h2>
+                    <h2>Join our mailing list for tickets to our shows, news, and more!</h2>
                     <Form onSubmit={handleSubmit}>
                         <Form.Group className="mb-3" controlId="formBasicEmail">
-                            <Form.Label>Email address</Form.Label>
                             <Form.Control
                                 type="email"
                                 placeholder="Enter email"
